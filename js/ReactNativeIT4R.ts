@@ -184,6 +184,6 @@ function ReactNativeIT4R() {
 
 
 
-export default {
+export {
     it4rNFCe
 };

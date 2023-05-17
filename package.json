@@ -2,8 +2,10 @@
   "name": "react-native-it4r",
   "version": "1.0.0",
   "description": "React Native lib to use IT4R lib from IT Fast",
-  "react-native": "js/index",
-  "source": "js/index",
+  "react-native": "js/index.js",
+  "source": "js/index.js",
+  "main": "js/index.js",
+  "module": "js/index.js",
   "files": [
     "js",
     "android",
