@@ -1,0 +1,48 @@
+{
+  "name": "react-native-it4r",
+  "version": "1.0.0",
+  "description": "React Native lib to use IT4R lib from IT Fast",
+  "react-native": "js/index",
+  "source": "js/index",
+  "files": [
+    "js",
+    "android",
+    "!android/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bistroapps/react-native-it4r.git"
+  },
+  "keywords": [
+    "react-native",
+    "zoop",
+    "sdk",
+    "android",
+    "integration"
+  ],
+  "author": "heldersi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bistroapps/react-native-it4r/issues"
+  },
+  "homepage": "https://github.com/bistroapps/react-native-it4r.git#readme",
+  "devDependencies": {},
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "codegenConfig": {
+    "name": "ReactNativeZoopSpec",
+    "type": "modules",
+    "jsSrcsDir": "js",
+    "android": {
+      "javaPackageName": "com.bistroapps.zoop"
+    }
+  }
+}
