@@ -8,10 +8,12 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import java.util.HashMap;
 
 import br.com.daruma.framework.mobile.DarumaMobile;
 import br.com.daruma.framework.mobile.exception.DarumaException;
@@ -29,20 +31,142 @@ public class It4rModule extends ReactContextBaseJavaModule {
 
     It4rModule(ReactApplicationContext context) {
         super(context);
+    }
 
-//        INICIALIZAÇÃO DO DISPOSITIVO. REPARE QUE NO ÚLTIMO PARÂMETRO TEMOS O MODELO DO EQUIPAMENTO
+    //EXTERNALIZAÇÃO DO NOME DO MÓDULO NATIVO QUE SERÁ CHAMADO NO REACT-NATIVE
+
+    @Override
+    public String getName() {
+        return "It4rModule";
+    }
+
+    @ReactMethod
+    public void inicializar(ReadableMap initConfig) {
+
+        // INICIALIZAÇÃO DO DISPOSITIVO. REPARE QUE NO ÚLTIMO PARÂMETRO TEMOS O MODELO DO EQUIPAMENTO
         try{
-            dmf = DarumaMobile.inicializar(context, "@FRAMEWORK(LOGMEMORIA=200;TRATAEXCECAO=FALSE;TIMEOUTWS=10000;SATNATIVO=FALSE);@DISPOSITIVO(NAME=T2_MINI)");
+            String params = "@FRAMEWORK(LOGMEMORIA=200;TRATAEXCECAO=FALSE;TIMEOUTWS=10000;SATNATIVO=FALSE)"
+            if(initConfig.hasKey("dispositivoName")) {
+                // Onde NAME pode ser: V2, V2PRO, K2, K2_MINI, T2_MINI, T2S, D2_MINI, T2S, 
+                // "Q4" - para a impressora Q4 da tectoy - via IP e porta
+                // "EPSON" - para as impressoras EPSON via IP e Porta... 
+                // "M10" - quando está utilizando o M10 da Elgin
+                params += ";@DISPOSITIVO(NAME="+initConfig.getString("dispositivoName")+")";
+            }
+            dmf = DarumaMobile.inicializar(context, params);
         }catch (Exception e){
             strAux= e.getMessage();
             mensagem("Erro na rotina de configuração: "+ strAux);
         }
+    }
 
-//        CRIANDO THREAD PARA EXECUÇÃO DAS CONFIGURAÇÃO PERTINENTES A NFCE - O MOTIVO DE SER EM UMA THREAD É PRA NÃO TRAVAR A INTERFACE
+    /**
+     * 
+     * IMPRESSORA
+     * 
+     */
+
+    @ReactMethod
+    public void imprimir() {
+        
+    }
+
+    /**
+     * 
+     * NFCe
+     * 
+     */
+    
+    // CONFIGURAÇÃO DE NFCE E EQUIPAMENTO QUE É CHAMADO PELA THREAD ACIMA.
+    // PARA ALGUNS DETALHES DE CONFIGURAÇÃO CONSULTE
+    // https://itfast.com.br/site/help/#t=Android%2FNFCE%2FConfiguracoes_Iniciais_NFCe.htm&rhsearch=RegAlterarValor_NFCe&rhsyns=%20
+    void configGneToNfce(HashMap config) {
+        Log.i("Teste", "Dentro da conf");
+
+        HashMap<String, String> ide = (HashMap<String, String>) config.get("ide");
+
+        //PREENCHA AS CHAVES COM OS SEUS DADOS JUNTO DA MIGRATE PARA A EMISSÃO
+        dmf.RegAlterarValor_NFCe("IDE\\cUF", ide.get("cUF"), false);
+        dmf.RegAlterarValor_NFCe("IDE\\cMunFG", ide.get("cMunFG"), false);
+
+        HashMap<String, String> emit = (HashMap<String, String>) config.get("emit");
+
+        dmf.RegAlterarValor_NFCe("EMIT\\CNPJ", emit.get("CNPJ"), false);
+        dmf.RegAlterarValor_NFCe("EMIT\\IE", emit.get("IE"), false);
+        dmf.RegAlterarValor_NFCe("EMIT\\xNome", emit.get("xNome"), false);
+
+        HashMap<String, String> enderEmit = (HashMap<String, String>) emit.get("enderEmit");
+        dmf.RegAlterarValor_NFCe("EMIT\\ENDEREMIT\\UF", enderEmit.get("UF"), false);
+
+        HashMap<String, String> configuracao = (HashMap<String, String>) config.get("configuracao");
+
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpPK", configuracao.get("EmpPK"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpCK", configuracao.get("EmpCK"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\Token", configuracao.get("Token"), false);
+
+
+        //OS DADOS ABAIXO PODEM SER MANTIDOS PARA TESTE
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\TipoAmbiente", "2", false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpCO", "001", false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\IdToken", "000001", false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ArredondarTruncar", "A", false);
+        dmf.RegAlterarValor_NFCe("EMIT\\CRT", "3", false);
+        // Impressora
+        // "TECTOY" para as bobinas de 58mm (bobina POS)
+        // "TECTOY_80" para as boninas de 80mm (Bobina de mini impressora)
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\Impressora", configuracao.get("Impressora"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\AvisoContingencia", "1", false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ImpressaoCompleta", "1", false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\NumeracaoAutomatica", "1", false);
+
+
+        HashMap<String, String> imposto = (HashMap<String, String>) config.get("imposto");
+        HashMap<String, String> icms = (HashMap<String, String>) imposto.get("imposto");
+        HashMap<String, String> pis = (HashMap<String, String>) imposto.get("imposto");
+        HashMap<String, String> cofins = (HashMap<String, String>) imposto.get("imposto");
+
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\orig", "0", false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\CST", "00", false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\modBC", "3", false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\PIS\\PISNT\\CST", "07", false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\COFINS\\COFINSNT\\CST", "07", false);
+
+        dmf.RegPersistirXML_NFCe();
+        dmf.confNumSeriesNF_NFCe("77", "890");
+   
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\HabilitarSAT", "0");
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EstadoCFe", "0");
+        Log.i("Teste", "Dentro da conf fim");
+
+    }
+
+    public class NfceThread implements Runnable {
+        private ReadableMap config;
+
+        public NfceThread(ReadableMap config) {
+            this.config = config;
+        }
+
+        public void run() {
+            try {
+                Looper.prepare();
+                configGneToNfce(this.config);
+            } catch (Exception de) {
+                strAux= de.getMessage();
+                Log.i("Teste", "Erro na configuração: "+strAux);
+                mensagem("Erro na configuração: "+strAux);
+                return;
+            }
+        }
+    }
+
+    @ReactMethod 
+    public void configNFCe(ReadableMap configs) {
+        //CRIANDO THREAD PARA EXECUÇÃO DAS CONFIGURAÇÃO PERTINENTES A NFCE - O MOTIVO DE SER EM UMA THREAD É PRA NÃO TRAVAR A INTERFACE
         Thread thrCgf;
         try {
             strAux="";
-            thrCgf = new Thread(config);
+            thrCgf = new Thread(new NfceThread(configs));
             thrCgf.start();
             thrCgf.join();
             Log.i("Teste", "CONFIGURADO");
@@ -52,70 +176,6 @@ public class It4rModule extends ReactContextBaseJavaModule {
             return;
         }
 
-    }
-
-//    CONFIGURAÇÃO DE NFCE E EQUIPAMENTO QUE É CHAMADO PELA THREAD ACIMA.
-//    PARA ALGUNS DETALHES DE CONFIGURAÇÃO CONSULTE
-//    https://itfast.com.br/site/help/#t=Android%2FNFCE%2FConfiguracoes_Iniciais_NFCe.htm&rhsearch=RegAlterarValor_NFCe&rhsyns=%20
-    void configGneToNfce() {
-        Log.i("Teste", "Dentro da conf");
-
-//        PREENCHA AS CHAVES COM OS SEUS DADOS JUNTO DA MIGRATE PARA A EMISSÃO
-        dmf.RegAlterarValor_NFCe("IDE\\cUF", "PREENCHER COM SEUS DADOS AQUI", false);
-        dmf.RegAlterarValor_NFCe("IDE\\cMunFG", "PREENCHER COM SEUS DADOS AQUI", false);
-        dmf.RegAlterarValor_NFCe("EMIT\\CNPJ", "PREENCHER COM SEUS DADOS AQUI", false);
-        dmf.RegAlterarValor_NFCe("EMIT\\IE", "PREENCHER COM SEUS DADOS AQUI", false);
-        dmf.RegAlterarValor_NFCe("EMIT\\xNome", "PREENCHER COM SEUS DADOS AQUI", false);
-        dmf.RegAlterarValor_NFCe("EMIT\\ENDEREMIT\\UF", "PREENCHER COM SEUS DADOS AQUI", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpPK", "PREENCHER COM SEUS DADOS AQUI", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpCK", "PREENCHER COM SEUS DADOS AQUI", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\Token", "PREENCHER COM SEUS DADOS AQUI", false);
-
-
-//OS DADOS ABAIXO PODEM SER MANTIDOS PARA TESTE
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\TipoAmbiente", "2", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpCO", "001", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\IdToken", "000001", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ArredondarTruncar", "A", false);
-        dmf.RegAlterarValor_NFCe("EMIT\\CRT", "3", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\Impressora", "TECTOY_80", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\AvisoContingencia", "1", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ImpressaoCompleta", "1", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\NumeracaoAutomatica", "1", false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\orig", "0", false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\CST", "00", false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\modBC", "3", false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\PIS\\PISNT\\CST", "07", false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\COFINS\\COFINSNT\\CST", "07", false);
-
-        dmf.RegPersistirXML_NFCe();
-        dmf.confNumSeriesNF_NFCe("77", "890");
-        //  }
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\HabilitarSAT", "0");
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EstadoCFe", "0");
-        Log.i("Teste", "Dentro da conf fim");
-
-    }
-    public Runnable config = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                Looper.prepare();
-                configGneToNfce();
-            } catch (Exception de) {
-                strAux= de.getMessage();
-                Log.i("Teste", "Erro na configuração: "+strAux);
-                mensagem("Erro na configuração: "+strAux);
-                return;
-            }
-        }
-    };
-
-//    EXTERNALIZAÇÃO DO NOME DO MÓDULO NATIVO QUE SERÁ CHAMADO NO REACT-NATIVE
-
-    @Override
-    public String getName() {
-        return "It4rModule";
     }
 
 
