@@ -59,3 +59,10 @@
    ```
 
    _Note: If you need to dynamically use a different deployment, you can also override your deployment key in JS code using [Code-Push options](./api-js.md#CodePushOptions)_
+
+// this block is required to work around the issue: Duplicate class com.sunmi._ found in modules jetified-it4r-runtime (it4r.aar) and jetified-printerlibrary-_-runtime (com.sunmi:printerlibrary:\*)
+configurations {
+all {
+exclude group: 'com.sunmi', module: 'printerlibrary'
+}
+}

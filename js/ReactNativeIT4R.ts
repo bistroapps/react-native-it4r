@@ -95,6 +95,17 @@ const it4rNFCe = {
     },
 }
 
+const it4rPrinter = {
+    imprimir: async () => {
+        const ret = await It4rModule.imprimir();
+        if (ret === 1) {
+            console.log('IMPRIMIR: SUCESSO!');
+        } else {
+            console.log('IMPRIMIR: ERRO!');
+        }
+    }
+}
+
 
 function ReactNativeIT4R() {
     const { It4rModule } = NativeModules;
@@ -183,14 +194,15 @@ function ReactNativeIT4R() {
 }
 
 // Onde NAME pode ser: V2, V2PRO, K2, K2_MINI, T2_MINI, T2S, D2_MINI, T2S, 
-                // "Q4" - para a impressora Q4 da tectoy - via IP e porta
-                // "EPSON" - para as impressoras EPSON via IP e Porta...
-                // "M10" - quando está utilizando o M10 da Elgin
+// "Q4" - para a impressora Q4 da tectoy - via IP e porta
+// "EPSON" - para as impressoras EPSON via IP e Porta...
+// "M10" - quando está utilizando o M10 da Elgin
 
-export type DeviceNamesType = "V2" | "V2PRO" | "K2" | "K2_MINI" | "T2_MINI" | "T2S" | "D2_MINI" | "T2S" | "Q4" | "EPSON" |  "M10" 
-const inicializar = (params?: { dispositivoName?: DeviceNamesType  }) => It4rModule.inicializar(params);
+export type DeviceNamesType = "V2" | "V2PRO" | "K2" | "K2_MINI" | "T2_MINI" | "T2S" | "D2_MINI" | "T2S" | "Q4" | "EPSON" | "M10"
+const inicializar = (params?: { dispositivoName?: DeviceNamesType }) => It4rModule.inicializar(params);
 
 export {
     inicializar,
-    it4rNFCe
+    it4rNFCe,
+    it4rPrinter
 };

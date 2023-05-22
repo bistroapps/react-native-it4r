@@ -70,7 +70,15 @@ public class It4rModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void imprimir() {
-
+        try {
+            dmf.iniciarComunicacao(); //comando opcional
+            dmf.enviarComandoDual("teste de impressão<l></l><b>TESTE de IMPRESSAO</b><l></l>----------------------------------------<l></l><ce>Daruma Mobile</ce><l></l>teste teste teste 1234567890.");
+            //dmf.respostaComando(resposta);
+            dmf.fecharComunicacao();	//comando opcional			
+        } catch (Exception e) {
+            strAux= e.getMessage();
+            mensagem("Retornou erro: "+ strAux);
+        }
     }
 
     /**
