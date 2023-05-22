@@ -21,6 +21,7 @@ import br.com.daruma.framework.mobile.exception.DarumaException;
 public class It4rModule extends ReactContextBaseJavaModule {
     private DarumaMobile dmf;
     String strAux;
+    ReactApplicationContext context;
 
     ExecutorService service = Executors.newSingleThreadExecutor();
 
@@ -31,6 +32,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
 
     It4rModule(ReactApplicationContext context) {
         super(context);
+        this.context = context;
     }
 
     //EXTERNALIZAÇÃO DO NOME DO MÓDULO NATIVO QUE SERÁ CHAMADO NO REACT-NATIVE
@@ -45,7 +47,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
 
         // INICIALIZAÇÃO DO DISPOSITIVO. REPARE QUE NO ÚLTIMO PARÂMETRO TEMOS O MODELO DO EQUIPAMENTO
         try{
-            String params = "@FRAMEWORK(LOGMEMORIA=200;TRATAEXCECAO=FALSE;TIMEOUTWS=10000;SATNATIVO=FALSE)"
+            String params = "@FRAMEWORK(LOGMEMORIA=200;TRATAEXCECAO=FALSE;TIMEOUTWS=10000;SATNATIVO=FALSE)";
             if(initConfig.hasKey("dispositivoName")) {
                 // Onde NAME pode ser: V2, V2PRO, K2, K2_MINI, T2_MINI, T2S, D2_MINI, T2S, 
                 // "Q4" - para a impressora Q4 da tectoy - via IP e porta
@@ -68,7 +70,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void imprimir() {
-        
+
     }
 
     /**
@@ -80,7 +82,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
     // CONFIGURAÇÃO DE NFCE E EQUIPAMENTO QUE É CHAMADO PELA THREAD ACIMA.
     // PARA ALGUNS DETALHES DE CONFIGURAÇÃO CONSULTE
     // https://itfast.com.br/site/help/#t=Android%2FNFCE%2FConfiguracoes_Iniciais_NFCe.htm&rhsearch=RegAlterarValor_NFCe&rhsyns=%20
-    void configGneToNfce(HashMap config) {
+    void configGneToNfce(HashMap<String, Object> config) {
         Log.i("Teste", "Dentro da conf");
 
         HashMap<String, String> ide = (HashMap<String, String>) config.get("ide");
@@ -95,7 +97,8 @@ public class It4rModule extends ReactContextBaseJavaModule {
         dmf.RegAlterarValor_NFCe("EMIT\\IE", emit.get("IE"), false);
         dmf.RegAlterarValor_NFCe("EMIT\\xNome", emit.get("xNome"), false);
 
-        HashMap<String, String> enderEmit = (HashMap<String, String>) emit.get("enderEmit");
+        HashMap<String, HashMap> emitMap = (HashMap<String, HashMap>) config.get("emit");
+        HashMap<String, String> enderEmit = (HashMap<String, String>) emitMap.get("enderEmit");
         dmf.RegAlterarValor_NFCe("EMIT\\ENDEREMIT\\UF", enderEmit.get("UF"), false);
 
         HashMap<String, String> configuracao = (HashMap<String, String>) config.get("configuracao");
@@ -120,7 +123,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
         dmf.RegAlterarValor_NFCe("CONFIGURACAO\\NumeracaoAutomatica", "1", false);
 
 
-        HashMap<String, String> imposto = (HashMap<String, String>) config.get("imposto");
+        HashMap<String, HashMap> imposto = (HashMap<String, HashMap>) config.get("imposto");
         HashMap<String, String> icms = (HashMap<String, String>) imposto.get("imposto");
         HashMap<String, String> pis = (HashMap<String, String>) imposto.get("imposto");
         HashMap<String, String> cofins = (HashMap<String, String>) imposto.get("imposto");
@@ -141,16 +144,16 @@ public class It4rModule extends ReactContextBaseJavaModule {
     }
 
     public class NfceThread implements Runnable {
-        private ReadableMap config;
+        private HashMap<String, Object> configs;
 
-        public NfceThread(ReadableMap config) {
-            this.config = config;
+        public NfceThread(HashMap<String, Object> configs) {
+            this.configs = configs;
         }
 
         public void run() {
             try {
                 Looper.prepare();
-                configGneToNfce(this.config);
+                configGneToNfce(this.configs);
             } catch (Exception de) {
                 strAux= de.getMessage();
                 Log.i("Teste", "Erro na configuração: "+strAux);
@@ -162,11 +165,12 @@ public class It4rModule extends ReactContextBaseJavaModule {
 
     @ReactMethod 
     public void configNFCe(ReadableMap configs) {
+        HashMap<String, Object> configsMap = It4rUtils.convertReadableMapToHashMap(configs);
         //CRIANDO THREAD PARA EXECUÇÃO DAS CONFIGURAÇÃO PERTINENTES A NFCE - O MOTIVO DE SER EM UMA THREAD É PRA NÃO TRAVAR A INTERFACE
         Thread thrCgf;
         try {
             strAux="";
-            thrCgf = new Thread(new NfceThread(configs));
+            thrCgf = new Thread(new NfceThread(configsMap));
             thrCgf.start();
             thrCgf.join();
             Log.i("Teste", "CONFIGURADO");

@@ -182,8 +182,15 @@ function ReactNativeIT4R() {
     };
 }
 
+// Onde NAME pode ser: V2, V2PRO, K2, K2_MINI, T2_MINI, T2S, D2_MINI, T2S, 
+                // "Q4" - para a impressora Q4 da tectoy - via IP e porta
+                // "EPSON" - para as impressoras EPSON via IP e Porta...
+                // "M10" - quando está utilizando o M10 da Elgin
 
+export type DeviceNamesType = "V2" | "V2PRO" | "K2" | "K2_MINI" | "T2_MINI" | "T2S" | "D2_MINI" | "T2S" | "Q4" | "EPSON" |  "M10" 
+const inicializar = (params?: { dispositivoName?: DeviceNamesType  }) => It4rModule.inicializar(params);
 
 export {
+    inicializar,
     it4rNFCe
 };
