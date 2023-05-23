@@ -117,36 +117,55 @@ public class It4rModule extends ReactContextBaseJavaModule {
 
 
         //OS DADOS ABAIXO PODEM SER MANTIDOS PARA TESTE
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\TipoAmbiente", "2", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpCO", "001", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\IdToken", "000001", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ArredondarTruncar", "A", false);
-        dmf.RegAlterarValor_NFCe("EMIT\\CRT", "3", false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\TipoAmbiente", configuracao.getOrDefault("TipoAmbiente", "2"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpCO", configuracao.getOrDefault("EmpCO", "001"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\IdToken", configuracao.getOrDefault("IdToken", "000001"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ArredondarTruncar", configuracao.getOrDefault("ArredondarTruncar", "A"), false);
+        dmf.RegAlterarValor_NFCe("EMIT\\CRT", emit.getOrDefault("CRT", "3"), false);
         // Impressora
         // "TECTOY" para as bobinas de 58mm (bobina POS)
         // "TECTOY_80" para as boninas de 80mm (Bobina de mini impressora)
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\Impressora", configuracao.get("Impressora"), false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\AvisoContingencia", "1", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ImpressaoCompleta", "1", false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\NumeracaoAutomatica", "1", false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\Impressora", configuracao.getOrDefault("Impressora", "TECTOY_80"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\AvisoContingencia", configuracao.getOrDefault("AvisoContingencia", "1"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ImpressaoCompleta", configuracao.getOrDefault("ImpressaoCompleta", "1"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\NumeracaoAutomatica", configuracao.getOrDefault("NumeracaoAutomatica", "1"), false);
 
 
+        /**
+        {
+            ...  
+            imposto: {
+                icms: {
+                    ICMS00_orig: string;
+                    ICMS00_CST: string;
+                    ICMS00_modBC: string;
+                };
+                pis: {
+                    PISNT_CST: string;
+                };
+                cofins: {
+                    COFINSNT_CST: string;
+                };
+            }
+            ...
+        }
+        */
         HashMap<String, HashMap> imposto = (HashMap<String, HashMap>) config.get("imposto");
-        HashMap<String, String> icms = (HashMap<String, String>) imposto.get("imposto");
-        HashMap<String, String> pis = (HashMap<String, String>) imposto.get("imposto");
-        HashMap<String, String> cofins = (HashMap<String, String>) imposto.get("imposto");
+        HashMap<String, String> icms = (HashMap<String, String>) imposto.get("icms");
+        HashMap<String, String> pis = (HashMap<String, String>) imposto.get("pis");
+        HashMap<String, String> cofins = (HashMap<String, String>) imposto.get("cofins");
 
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\orig", "0", false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\CST", "00", false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\modBC", "3", false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\PIS\\PISNT\\CST", "07", false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\COFINS\\COFINSNT\\CST", "07", false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\orig", icms.getOrDefault("ICMS00_orig","0"), false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\CST", icms.getOrDefault("ICMS00_CST","00"), false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\modBC", icms.getOrDefault("ICMS00_modBC","3"), false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\PIS\\PISNT\\CST", pis.getOrDefault("PISNT_CST","07"), false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\COFINS\\COFINSNT\\CST", cofins.getOrDefault("COFINSNT_CST","07"), false);
 
         dmf.RegPersistirXML_NFCe();
         dmf.confNumSeriesNF_NFCe("77", "890");
    
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\HabilitarSAT", "0");
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EstadoCFe", "0");
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\HabilitarSAT", configuracao.getOrDefault("HabilitarSAT", "0"));
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EstadoCFe", configuracao.getOrDefault("EstadoCFe", "0"));
         Log.i("Teste", "Dentro da conf fim");
 
     }
@@ -172,7 +191,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod 
-    public void configNFCe(ReadableMap configs) {
+    public void config_NFCe(ReadableMap configs) {
         HashMap<String, Object> configsMap = It4rUtils.convertReadableMapToHashMap(configs);
         //CRIANDO THREAD PARA EXECUÇÃO DAS CONFIGURAÇÃO PERTINENTES A NFCE - O MOTIVO DE SER EM UMA THREAD É PRA NÃO TRAVAR A INTERFACE
         Thread thrCgf;
@@ -208,7 +227,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
 //    https://itfast.com.br/site/help/#t=NFCE%2FaCFVenderCompleto_NFCe.htm&rhsearch=aCFVenderCompleto_NFCE&rhhlterm=aCFVenderCompleto_NFCE&rhsyns=%20
 
     @ReactMethod
-    public void aCFVenderCompleto_NFCE(String pszCargaTributaria, String pszQuantidade, String pszPrecoUnitario, String pszTipoDescAcresc, String pszValorDescAcresc, String pszCodigoItem, String pszNCM, String pszCFOP, String pszUnidadeMedida, String pszDescricaoItem, String pszUsoFuturo, Promise promise){
+    public void aCFVenderCompleto_NFCe(String pszCargaTributaria, String pszQuantidade, String pszPrecoUnitario, String pszTipoDescAcresc, String pszValorDescAcresc, String pszCodigoItem, String pszNCM, String pszCFOP, String pszUnidadeMedida, String pszDescricaoItem, String pszUsoFuturo, Promise promise){
         Log.i("Teste",  "aCFVenderCompleto_NFCE: " +pszCargaTributaria +", "+ pszQuantidade+", "+ pszPrecoUnitario+", "+ pszTipoDescAcresc+", "+ pszValorDescAcresc+", "+ pszCodigoItem+", "+ pszNCM+", "+ pszCFOP+", "+ pszUnidadeMedida+", "+ pszDescricaoItem+", "+ pszUsoFuturo);
         try{
             promise.resolve(dmf.aCFVenderCompleto_NFCe(pszCargaTributaria, pszQuantidade, pszPrecoUnitario, pszTipoDescAcresc, pszValorDescAcresc, pszCodigoItem, pszNCM, pszCFOP, pszUnidadeMedida, pszDescricaoItem, pszUsoFuturo));
@@ -221,7 +240,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
     //    MÉTODO DE TOTALIZAÇÃO EXTERNALIZADO PARA A CAMADA DO REAT-NATIVE
 //    https://itfast.com.br/site/help/#t=NFCE%2FaCFTotalizar_NFCe.htm&rhsearch=aCFTotalizar_NFCe&rhhlterm=aCFTotalizar_NFCe&rhsyns=%20
     @ReactMethod
-    public void aCFTotalizar_NFCe(String pszTipoDescAcresc, String pszValorDescAcresc,Promise promise){
+    public void aCFTotalizar_NFCe(String pszTipoDescAcresc, String pszValorDescAcresc, Promise promise){
         Log.i("Teste",  "aCFTotalizar_NFCe: " +pszTipoDescAcresc +", "+ pszValorDescAcresc);
         try{
             promise.resolve( dmf.aCFTotalizar_NFCe(pszTipoDescAcresc, pszValorDescAcresc));
