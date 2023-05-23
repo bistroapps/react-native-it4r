@@ -78,7 +78,7 @@ const it4rNFCe = {
         if (params.icmsSubgrupo === 'ICMS60') {
             await It4rModule.aCFConfICMS60_NFCe("0", "60", "", "");
         }
-        const ret = await It4rModule.aCFVenderCompleto_NFCE(
+        const ret = await It4rModule.aCFVenderCompleto_NFCe(
             params.pszCargaTributaria, // ex: '17.50',
             params.pszQuantidade, // ex: '1.00',
             params.pszPrecoUnitario, // ex: '8.00',
