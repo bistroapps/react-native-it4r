@@ -223,9 +223,38 @@ public class It4rModule extends ReactContextBaseJavaModule {
         }
     }
 
+    @ReactMethod
+    public void aCFConfICMS00_NFCe(String pszOrig, String pszCST, String pszModBC, String pszpICMS, Promise promise){
+        Log.i("Teste",  "aCFConfICMS00_NFCe: " +pszOrig +", "+ pszCST+", "+ pszModBC+", "+ pszpICMS);
+        try{
+            promise.resolve(dmf.aCFConfICMS00_NFCe(pszOrig, pszCST, pszModBC, pszpICMS));
+        }catch (Exception e){
+            promise.reject("Create Event Error", e);
+        }
+    }
+
+    @ReactMethod
+    public void aCFConfICMS40_NFCe(String pszOrig, String pszCST, String pszvICMSDeson, String pszMotDesICMS, Promise promise){
+        Log.i("Teste",  "aCFConfICMS40_NFCe: " +pszOrig +", "+ pszCST+", "+ pszvICMSDeson+", "+ pszMotDesICMS);
+        try{
+            promise.resolve(dmf.aCFConfICMS40_NFCe(pszOrig, pszCST, pszvICMSDeson, pszMotDesICMS));
+        }catch (Exception e){
+            promise.reject("Create Event Error", e);
+        }
+    }
+
+    @ReactMethod
+    public void aCFConfICMS60_NFCe(String pszOrig, String pszCST, String pszvBCSTRet, String pszvICMSSTRet, Promise promise){
+        Log.i("Teste",  "aCFConfICMS60_NFCe: " +pszOrig +", "+ pszCST+", "+ pszvBCSTRet+", "+ pszvICMSSTRet);
+        try{
+            promise.resolve(dmf.aCFConfICMS60_NFCe(pszOrig, pszCST, pszvBCSTRet, pszvICMSSTRet));
+        }catch (Exception e){
+            promise.reject("Create Event Error", e);
+        }
+    }
+
     //    MÉTODO DE VENDA DE ITEM EXTERNALIZADO PARA A CAMADA DO REAT-NATIVE
 //    https://itfast.com.br/site/help/#t=NFCE%2FaCFVenderCompleto_NFCe.htm&rhsearch=aCFVenderCompleto_NFCE&rhhlterm=aCFVenderCompleto_NFCE&rhsyns=%20
-
     @ReactMethod
     public void aCFVenderCompleto_NFCe(String pszCargaTributaria, String pszQuantidade, String pszPrecoUnitario, String pszTipoDescAcresc, String pszValorDescAcresc, String pszCodigoItem, String pszNCM, String pszCFOP, String pszUnidadeMedida, String pszDescricaoItem, String pszUsoFuturo, Promise promise){
         Log.i("Teste",  "aCFVenderCompleto_NFCE: " +pszCargaTributaria +", "+ pszQuantidade+", "+ pszPrecoUnitario+", "+ pszTipoDescAcresc+", "+ pszValorDescAcresc+", "+ pszCodigoItem+", "+ pszNCM+", "+ pszCFOP+", "+ pszUnidadeMedida+", "+ pszDescricaoItem+", "+ pszUsoFuturo);
@@ -234,7 +263,6 @@ public class It4rModule extends ReactContextBaseJavaModule {
         }catch (Exception e){
             promise.reject("Create Event Error", e);
         }
-
     }
 
     //    MÉTODO DE TOTALIZAÇÃO EXTERNALIZADO PARA A CAMADA DO REAT-NATIVE

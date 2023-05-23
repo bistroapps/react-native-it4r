@@ -66,8 +66,18 @@ const it4rNFCe = {
         pszCFOP: string,
         pszUnidadeMedida: string,
         pszDescricaoItem: string,
-        pszUsoFuturo: string
+        pszUsoFuturo: string,
+        icmsSubgrupo: 'ICMS00' | 'ICMS60' | 'ICMS40'
     }) => {
+        if (params.icmsSubgrupo === 'ICMS00') {
+            await It4rModule.aCFConfICMS00_NFCe("0", "00", "0", "");
+        }
+        if (params.icmsSubgrupo === 'ICMS40') {
+            await It4rModule.aCFConfICMS40_NFCe("0", "41", "", "9");
+        }
+        if (params.icmsSubgrupo === 'ICMS60') {
+            await It4rModule.aCFConfICMS60_NFCe("0", "60", "", "");
+        }
         const ret = await It4rModule.aCFVenderCompleto_NFCE(
             params.pszCargaTributaria, // ex: '17.50',
             params.pszQuantidade, // ex: '1.00',
