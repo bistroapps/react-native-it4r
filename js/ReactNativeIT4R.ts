@@ -59,7 +59,7 @@ const it4rNFCe = {
         pszCargaTributaria: string,
         pszQuantidade: string,
         pszPrecoUnitario: string,
-        pszTipoDescAcresc: string,
+        pszTipoDescAcresc: 'D$' | 'A$' | 'D%' | 'A%',
         pszValorDescAcresc: string,
         pszCodigoItem: string,
         pszNCM: string,
@@ -75,7 +75,7 @@ const it4rNFCe = {
             params.pszTipoDescAcresc, // ex: 'D$',
             params.pszValorDescAcresc, // ex: '0.00',
             params.pszCodigoItem, // ex: '0001',
-            params.pszNCM, // ex: '21050010',
+            params.pszNCM, // ex: '21050010', Nomenclatura Comum do Mercosul 
             params.pszCFOP, // ex: '5102',
             params.pszUnidadeMedida, // ex: 'UN',
             params.pszDescricaoItem, // ex: 'GUARANA 2L de teste com txt quebra linha abcd1234567909876543321',
@@ -91,7 +91,7 @@ const it4rNFCe = {
     // https://itfast.com.br/site/help/#t=NFCE%2FaCFTotalizar_NFCe.htm&rhsearch=aCFTotalizar_NFCe&rhhlterm=aCFTotalizar_NFCe&rhsyns=%20
     // String pszTipoDescAcresc, String pszValorDescAcresc
     totalizarCupom: async (params: {
-        pszTipoDescAcresc: string;
+        pszTipoDescAcresc: 'D$' | 'A$' | 'D%' | 'A%';
         pszValorDescAcresc: string;
     }) => {
         const ret = await It4rModule.aCFTotalizar_NFCe(
