@@ -130,36 +130,54 @@ public class It4rModule extends ReactContextBaseJavaModule {
         dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ImpressaoCompleta", configuracao.getOrDefault("ImpressaoCompleta", "1"), false);
         dmf.RegAlterarValor_NFCe("CONFIGURACAO\\NumeracaoAutomatica", configuracao.getOrDefault("NumeracaoAutomatica", "1"), false);
 
-
-        /**
-        {
-            ...  
-            imposto: {
-                icms: {
-                    ICMS00_orig: string;
-                    ICMS00_CST: string;
-                    ICMS00_modBC: string;
-                };
-                pis: {
-                    PISNT_CST: string;
-                };
-                cofins: {
-                    COFINSNT_CST: string;
-                };
-            }
-            ...
-        }
+       /**
+        icms: {
+            // 00: Tributada integralmente
+            // 60: Substituição Tributada
+            subgrupo: 'ICMS00' | 'ICMS60', // utilizado como imposto padrão para os itens em que não informar o tipo de ICMS antes da venda.
+            ICMS00: {
+                orig: string,
+                CST: '00', // 00 - Tributada integralmente
+                modBC: '0',
+            },
+            ICMS60: {
+                orig: string,
+                CST: '60', // 60 - ICMS cobrado anteriormente por substituição tributária.
+            },
+            };
+            pis: {
+                PISNT_CST: string;
+            };
+            cofins: {
+                COFINSNT_CST: string;
+            };
         */
         HashMap<String, HashMap> imposto = (HashMap<String, HashMap>) config.get("imposto");
         HashMap<String, String> icms = (HashMap<String, String>) imposto.get("icms");
         HashMap<String, String> pis = (HashMap<String, String>) imposto.get("pis");
         HashMap<String, String> cofins = (HashMap<String, String>) imposto.get("cofins");
 
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\orig", icms.getOrDefault("ICMS00_orig","0"), false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\CST", icms.getOrDefault("ICMS00_CST","00"), false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\modBC", icms.getOrDefault("ICMS00_modBC","3"), false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\PIS\\PISNT\\CST", pis.getOrDefault("PISNT_CST","07"), false);
-        dmf.RegAlterarValor_NFCe("IMPOSTO\\COFINS\\COFINSNT\\CST", cofins.getOrDefault("COFINSNT_CST","07"), false);
+        HashMap<String, HashMap> icmsSub = (HashMap<String, HashMap>) imposto.get("icms");
+        if(icms.get("subgrupo") == "ICMS00") {
+            HashMap<String, String> icms0 = (HashMap<String, String>) icmsSub.get("ICMS00");
+            dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\orig", icms0.get("orig"), false);
+            dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\CST", icms0.get("CST"), false);
+            dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS00\\modBC", icms0.get("modBC"), false);
+        }
+        if(icms.get("subgrupo") == "ICMS40") {
+            HashMap<String, String> icms4 = (HashMap<String, String>) icmsSub.get("ICMS40");
+            dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS40\\orig", icms4.get("orig"), false);
+            dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS40\\CST", icms4.get("CST"), false);
+        }
+        if(icms.get("subgrupo") == "ICMS60") {
+            HashMap<String, String> icms6 = (HashMap<String, String>) icmsSub.get("ICMS40");
+            dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS60\\orig", icms6.get("orig"), false);
+            dmf.RegAlterarValor_NFCe("IMPOSTO\\ICMS\\ICMS60\\CST", icms6.get("CST"), false);
+        }
+
+
+        //dmf.RegAlterarValor_NFCe("IMPOSTO\\PIS\\PISNT\\CST", pis.getOrDefault("PISNT_CST","07"), false);
+        //dmf.RegAlterarValor_NFCe("IMPOSTO\\COFINS\\COFINSNT\\CST", cofins.getOrDefault("COFINSNT_CST","07"), false);
 
         dmf.RegPersistirXML_NFCe();
         dmf.confNumSeriesNF_NFCe("77", "890");
