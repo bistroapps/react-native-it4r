@@ -192,6 +192,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
 
     @ReactMethod 
     public void config_NFCe(ReadableMap configs) {
+        Log.i("Teste",  "config_NFCe");
         HashMap<String, Object> configsMap = It4rUtils.convertReadableMapToHashMap(configs);
         //CRIANDO THREAD PARA EXECUÇÃO DAS CONFIGURAÇÃO PERTINENTES A NFCE - O MOTIVO DE SER EM UMA THREAD É PRA NÃO TRAVAR A INTERFACE
         Thread thrCgf;
