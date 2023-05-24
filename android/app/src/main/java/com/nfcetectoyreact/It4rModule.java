@@ -43,7 +43,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void inicializar(ReadableMap initConfig) {
+    public void inicializar(ReadableMap initConfig, Promise promise) {
 
         // INICIALIZAÇÃO DO DISPOSITIVO. REPARE QUE NO ÚLTIMO PARÂMETRO TEMOS O MODELO DO EQUIPAMENTO
         try{
@@ -56,9 +56,11 @@ public class It4rModule extends ReactContextBaseJavaModule {
                 params += ";@DISPOSITIVO(NAME="+initConfig.getString("dispositivoName")+")";
             }
             dmf = DarumaMobile.inicializar(context, params);
+            promise.resolve("Inicializado");
         }catch (Exception e){
             strAux= e.getMessage();
             mensagem("Erro na rotina de configuração: "+ strAux);
+            promise.reject("Create Event Error", e);
         }
     }
 
@@ -176,8 +178,8 @@ public class It4rModule extends ReactContextBaseJavaModule {
         }
 
 
-        //dmf.RegAlterarValor_NFCe("IMPOSTO\\PIS\\PISNT\\CST", pis.getOrDefault("PISNT_CST","07"), false);
-        //dmf.RegAlterarValor_NFCe("IMPOSTO\\COFINS\\COFINSNT\\CST", cofins.getOrDefault("COFINSNT_CST","07"), false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\PIS\\PISNT\\CST", pis.getOrDefault("PISNT_CST","07"), false);
+        dmf.RegAlterarValor_NFCe("IMPOSTO\\COFINS\\COFINSNT\\CST", cofins.getOrDefault("COFINSNT_CST","07"), false);
 
         dmf.RegPersistirXML_NFCe();
         dmf.confNumSeriesNF_NFCe("77", "890");
@@ -290,7 +292,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
     public void aCFTotalizar_NFCe(String pszTipoDescAcresc, String pszValorDescAcresc, Promise promise){
         Log.i("Teste",  "aCFTotalizar_NFCe: " +pszTipoDescAcresc +", "+ pszValorDescAcresc);
         try{
-            promise.resolve( dmf.aCFTotalizar_NFCe(pszTipoDescAcresc, pszValorDescAcresc));
+            promise.resolve(dmf.aCFTotalizar_NFCe(pszTipoDescAcresc, pszValorDescAcresc));
         }catch (Exception e){
             promise.reject("Create Event Error", e);
         }

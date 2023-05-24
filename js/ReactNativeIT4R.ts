@@ -13,8 +13,9 @@ const { It4rModule } = NativeModules;
  */
 const it4rNFCe = {
 
-    config: (params: ConfigParams) => {
-        It4rModule.config_NFCe(params);
+    config: async (params: ConfigParams) => {
+        console.log(params)
+        await It4rModule.config_NFCe(params);
     },
 
     // https://itfast.com.br/site/help/#t=NFCE%2FaCFAbrir_NFCe.htm&rhsearch=aCFAbrir_NFCe&rhhlterm=aCFAbrir_NFCe&rhsyns=%20
@@ -43,13 +44,7 @@ const it4rNFCe = {
             params.pszUF,
             params.pszCEP
         );
-        if (ret === 1) {
-            console.log('SUCESSO ABRIR CUPOM!');
-            return 1;
-        } else {
-            console.log('ERRO ABRIR CUPOM!');
-            return 0;
-        }
+        return ret;
     },
 
     // https://itfast.com.br/site/help/#t=NFCE%2FaCFVenderCompleto_NFCe.htm&rhsearch=aCFVenderCompleto_NFCE&rhhlterm=aCFVenderCompleto_NFCE&rhsyns=%20
@@ -91,11 +86,7 @@ const it4rNFCe = {
             params.pszDescricaoItem, // ex: 'GUARANA 2L de teste com txt quebra linha abcd1234567909876543321',
             params.pszUsoFuturo, // ex: 'CEST=2300100;cEAN=123456789012;cEANTrib=123456789012;',
         );
-        if (ret === 1) {
-            //ToastAndroid.show('SUCESSO VENDER ITEM!', ToastAndroid.SHORT);
-        } else {
-            //ToastAndroid.show('ERRO VENDER ITEM!', ToastAndroid.SHORT);
-        }
+        return ret
     },
 
     // https://itfast.com.br/site/help/#t=NFCE%2FaCFTotalizar_NFCe.htm&rhsearch=aCFTotalizar_NFCe&rhhlterm=aCFTotalizar_NFCe&rhsyns=%20
@@ -108,11 +99,7 @@ const it4rNFCe = {
             params.pszTipoDescAcresc, // ex: 'D$'
             params.pszValorDescAcresc, // ex: '0.00'
         );
-        if (ret === 1) {
-            // ToastAndroid.show('SUCESSO TOTALIZAR CUPOM!', ToastAndroid.SHORT);
-        } else {
-            // ToastAndroid.show('ERRO TOTALIZAR CUPOM!', ToastAndroid.SHORT);
-        }
+        return ret
     },
 
     // https://itfast.com.br/site/help/#t=NFCE%2FaCFEfetuarPagamento_NFCe.htm&rhsearch=aCFEfetuarPagamento_NFCe&rhhlterm=aCFEfetuarPagamento_NFCe&rhsyns=%20
@@ -125,11 +112,7 @@ const it4rNFCe = {
             params.pszFormaPgto, // ex: 'Dinheiro',
             params.pszValor, // ex: '100.00'
         );
-        if (ret === 1) {
-            // ToastAndroid.show('SUCESSO PAGAR CUPOM!', ToastAndroid.SHORT);
-        } else {
-            //ToastAndroid.show('ERRO PAGAR CUPOM!', ToastAndroid.SHORT);
-        }
+        return ret
     },
 
     // https://itfast.com.br/site/help/#t=NFCE%2FtCFEncerrar_NFCe.htm&rhsearch=tCFEncerrar_NFCe&rhhlterm=tCFEncerrar_NFCe&rhsyns=%20
@@ -137,12 +120,8 @@ const it4rNFCe = {
     encerrarCupom: async (params: {
         strMsgPromocional: string;
     }) => {
-        const ret = await It4rModule.tCFEncerrar_NFCe('Obrigado! Volte Sempre!!!');
-        if (ret === 0) {
-            //ToastAndroid.show('SUCESSO ENCERRAR CUPOM!', ToastAndroid.SHORT);
-        } else {
-            //ToastAndroid.show('RETORNO DO ENCERRAMENTO' + ret, ToastAndroid.SHORT);
-        }
+        const ret = await It4rModule.tCFEncerrar_NFCe(params.strMsgPromocional);
+        return ret
     },
 
     // https://itfast.com.br/site/help/#t=NFCE%2FtCFCancelar_NFCe.htm&rhsearch=tCFCancelar_NFCe&rhhlterm=tCFCancelar_NFCe&rhsyns=%20
@@ -162,11 +141,7 @@ const it4rNFCe = {
             params.strProtAutorizacao,
             params.strJustificativa
         );
-        if (ret === 0) {
-            //ToastAndroid.show('SUCESSO CANCELAR CUPOM!', ToastAndroid.SHORT);
-        } else {
-            //ToastAndroid.show('RETORNO DO CANCELAR' + ret, ToastAndroid.SHORT);
-        }
+        return ret
     },
 }
 
