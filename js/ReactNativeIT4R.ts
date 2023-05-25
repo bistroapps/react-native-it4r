@@ -15,7 +15,8 @@ const it4rNFCe = {
 
     config: async (params: ConfigParams) => {
         console.log(params)
-        await It4rModule.config_NFCe(params);
+        const ret = await It4rModule.config_NFCe(params);
+        return ret;
     },
 
     // https://itfast.com.br/site/help/#t=NFCE%2FaCFAbrir_NFCe.htm&rhsearch=aCFAbrir_NFCe&rhhlterm=aCFAbrir_NFCe&rhsyns=%20
@@ -30,6 +31,7 @@ const it4rNFCe = {
         pszUF: string;
         pszCEP: string;
     }) => {
+        // Se algum dos parâmetros for informado, o campo pszCPF é OBRIGATORIO.
         // String pszCPF, String pszNome, String pszLgr, String pszNro, 
         // String pszBairro, String pszcMun, String pszMunicipio, 
         // String pszUF, String pszCEP
@@ -83,7 +85,7 @@ const it4rNFCe = {
             params.pszNCM, // ex: '21050010', Nomenclatura Comum do Mercosul 
             params.pszCFOP, // ex: '5102',
             params.pszUnidadeMedida, // ex: 'UN',
-            params.pszDescricaoItem, // ex: 'GUARANA 2L de teste com txt quebra linha abcd1234567909876543321',
+            params.pszDescricaoItem.slice(0, 100), // ex: 'GUARANA 2L de teste com txt quebra linha abcd1234567909876543321',
             params.pszUsoFuturo, // ex: 'CEST=2300100;cEAN=123456789012;cEANTrib=123456789012;',
         );
         return ret

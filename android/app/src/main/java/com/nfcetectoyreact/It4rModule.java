@@ -55,8 +55,10 @@ public class It4rModule extends ReactContextBaseJavaModule {
                 // "M10" - quando está utilizando o M10 da Elgin
                 params += ";@DISPOSITIVO(NAME="+initConfig.getString("dispositivoName")+")";
             }
+            mensagem("params: "+ params);
+
             dmf = DarumaMobile.inicializar(context, params);
-            promise.resolve("Inicializado");
+            promise.resolve(params);
         }catch (Exception e){
             strAux= e.getMessage();
             mensagem("Erro na rotina de configuração: "+ strAux);
@@ -94,12 +96,15 @@ public class It4rModule extends ReactContextBaseJavaModule {
     // https://itfast.com.br/site/help/#t=Android%2FNFCE%2FConfiguracoes_Iniciais_NFCe.htm&rhsearch=RegAlterarValor_NFCe&rhsyns=%20
     void configGneToNfce(HashMap<String, Object> config) {
         Log.i("Teste", "Dentro da conf");
+        //dmf.RegAlterarValor_NFCe("NFCE\\Auditoria", "1");
 
         HashMap<String, String> ide = (HashMap<String, String>) config.get("ide");
 
         //PREENCHA AS CHAVES COM OS SEUS DADOS JUNTO DA MIGRATE PARA A EMISSÃO
-        dmf.RegAlterarValor_NFCe("IDE\\cUF", ide.get("cUF"), false);
         dmf.RegAlterarValor_NFCe("IDE\\cMunFG", ide.get("cMunFG"), false);
+
+        dmf.RegAlterarValor_NFCe("IDE\\cUF", ide.get("cUF"), false);
+
 
         HashMap<String, String> emit = (HashMap<String, String>) config.get("emit");
 
@@ -116,12 +121,12 @@ public class It4rModule extends ReactContextBaseJavaModule {
         dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpPK", configuracao.get("EmpPK"), false);
         dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpCK", configuracao.get("EmpCK"), false);
         dmf.RegAlterarValor_NFCe("CONFIGURACAO\\Token", configuracao.get("Token"), false);
+        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\IdToken", configuracao.getOrDefault("IdToken", "000001"), false);
 
 
         //OS DADOS ABAIXO PODEM SER MANTIDOS PARA TESTE
         dmf.RegAlterarValor_NFCe("CONFIGURACAO\\TipoAmbiente", configuracao.getOrDefault("TipoAmbiente", "2"), false);
         dmf.RegAlterarValor_NFCe("CONFIGURACAO\\EmpCO", configuracao.getOrDefault("EmpCO", "001"), false);
-        dmf.RegAlterarValor_NFCe("CONFIGURACAO\\IdToken", configuracao.getOrDefault("IdToken", "000001"), false);
         dmf.RegAlterarValor_NFCe("CONFIGURACAO\\ArredondarTruncar", configuracao.getOrDefault("ArredondarTruncar", "A"), false);
         dmf.RegAlterarValor_NFCe("EMIT\\CRT", emit.getOrDefault("CRT", "3"), false);
         // Impressora
@@ -240,6 +245,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
             int ret = dmf.aCFAbrir_NFCe(pszCPF, pszNome, pszLgr, pszNro, pszBairro, pszcMun, pszMunicipio, pszUF, pszCEP);
             promise.resolve(ret);
         }catch(Exception e) {
+            mensagem("Ocorreu erro: "+ e.getMessage());
             promise.reject("Create Event Error", e);
         }
     }
@@ -250,6 +256,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
         try{
             promise.resolve(dmf.aCFConfICMS00_NFCe(pszOrig, pszCST, pszModBC, pszpICMS));
         }catch (Exception e){
+            mensagem("Ocorreu erro: "+ e.getMessage());
             promise.reject("Create Event Error", e);
         }
     }
@@ -260,6 +267,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
         try{
             promise.resolve(dmf.aCFConfICMS40_NFCe(pszOrig, pszCST, pszvICMSDeson, pszMotDesICMS));
         }catch (Exception e){
+            mensagem("Ocorreu erro: "+ e.getMessage());
             promise.reject("Create Event Error", e);
         }
     }
@@ -270,6 +278,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
         try{
             promise.resolve(dmf.aCFConfICMS60_NFCe(pszOrig, pszCST, pszvBCSTRet, pszvICMSSTRet));
         }catch (Exception e){
+            mensagem("Ocorreu erro: "+ e.getMessage());
             promise.reject("Create Event Error", e);
         }
     }
@@ -282,6 +291,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
         try{
             promise.resolve(dmf.aCFVenderCompleto_NFCe(pszCargaTributaria, pszQuantidade, pszPrecoUnitario, pszTipoDescAcresc, pszValorDescAcresc, pszCodigoItem, pszNCM, pszCFOP, pszUnidadeMedida, pszDescricaoItem, pszUsoFuturo));
         }catch (Exception e){
+            mensagem("Ocorreu erro: "+ e.getMessage());
             promise.reject("Create Event Error", e);
         }
     }
@@ -294,6 +304,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
         try{
             promise.resolve(dmf.aCFTotalizar_NFCe(pszTipoDescAcresc, pszValorDescAcresc));
         }catch (Exception e){
+            mensagem("Ocorreu erro na venda: "+ e.getMessage());
             promise.reject("Create Event Error", e);
         }
 
@@ -307,6 +318,7 @@ public class It4rModule extends ReactContextBaseJavaModule {
         try{
             promise.resolve( dmf.aCFEfetuarPagamento_NFCe(pszFormaPgto, pszValor));
         }catch (Exception e){
+            mensagem("Ocorreu erro: "+ e.getMessage());
             promise.reject("Create Event Error", e);
         }
     }
